@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+<VBox id="container"
+      xmlns="http://javafx.com/javafx/8.0.40"
+      xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="connectedStatus" text="Not Connected"/>
+    <HBox fx:id="iconContainer">
+        <ImageView fx:id="connectedIcon"><Image url="icons/unlocked.png" /></ImageView>
+    </HBox>
+    <Label fx:id="connectLocation" text="Spain/Madrid"/>
+    <HBox fx:id="chooseLocationContainer">
+        <ImageView><Image url="icons/gps.png" requestedHeight="18" preserveRatio="true"/></ImageView>
+        <Hyperlink fx:id="chooseLocationLink" text="Select another location"/>
+    </HBox>
+    <HBox fx:id="buttonContainer">
+        <Button fx:id="connectButton" text="CONNECT"/>
+    </HBox>
+
+    <stylesheets>
+        <URL value="@style.css"/>
+    </stylesheets>
+</VBox>

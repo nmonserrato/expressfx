@@ -1,0 +1,53 @@
+#container {
+    -fx-alignment: top-center;
+    -fx-background-color: #efefef;
+    -fx-pref-width: 250px;
+    -fx-font-family: "Ubuntu";
+}
+
+#connectedStatus {
+    -fx-background-color: #cecece;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 50px;
+    -fx-alignment: center;
+    -fx-font-size: 16;
+}
+
+#iconContainer {
+    -fx-alignment: center;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 180px;
+}
+
+#connectLocation {
+    -fx-pref-height: 25px;
+    -fx-font-size: 12;
+}
+
+#chooseLocationContainer {
+    -fx-alignment: center;
+    -fx-pref-height: 25px;
+    -fx-font-size: 12;
+}
+
+#chooseLocationLink {
+-fx-border-color: transparent;
+}
+
+#buttonContainer {
+    -fx-alignment: center;
+    -fx-padding: 20 0 20 0;
+}
+
+#connectButton {
+    -fx-pref-width: 220px;
+    -fx-pref-height: 36px;
+    -fx-font-size: 16;
+    -fx-background-color: #03c03c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+#connectButton:armed {
+    -fx-background-color: #01a01a;
+}
