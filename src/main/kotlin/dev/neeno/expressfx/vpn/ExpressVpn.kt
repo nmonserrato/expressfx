@@ -1,10 +1,9 @@
-package dev.neeno.expressfx.infrastructure.vpn
+package dev.neeno.expressfx.vpn
 
-import dev.neeno.expressfx.domain.vpn.Server
-import dev.neeno.expressfx.domain.vpn.Status
-import dev.neeno.expressfx.domain.vpn.Status.Companion.DISCONNECTED
-import dev.neeno.expressfx.domain.vpn.VpnService
+import dev.neeno.expressfx.vpn.Status.Companion.DISCONNECTED
 import javafx.scene.layout.VBox
+import tornadofx.runAsync
+import tornadofx.ui
 import java.util.concurrent.TimeUnit
 
 class ExpressVpn : VpnService {
@@ -23,8 +22,12 @@ class ExpressVpn : VpnService {
     }
 
     override fun switchStatus(root: VBox) {
-        if (status() == DISCONNECTED) connect() else disconnect()
-        status().render(root)
+        Status.CHANGING.render(root)
+        runAsync {
+            if (status() == DISCONNECTED) connect() else disconnect()
+        } ui {
+            status().render(root)
+        }
     }
 
     override fun connect() {

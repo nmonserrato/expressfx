@@ -1,5 +1,6 @@
-package dev.neeno.expressfx.infrastructure.gui
+package dev.neeno.expressfx
 
+import dev.neeno.expressfx.gui.MainView
 import tornadofx.App
 import tornadofx.launch
 

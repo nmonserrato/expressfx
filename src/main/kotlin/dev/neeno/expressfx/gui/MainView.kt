@@ -1,6 +1,6 @@
-package dev.neeno.expressfx.infrastructure.gui
+package dev.neeno.expressfx.gui
 
-import dev.neeno.expressfx.domain.vpn.VpnService
+import dev.neeno.expressfx.vpn.VpnService
 import javafx.scene.control.Button
 import javafx.scene.layout.VBox
 import tornadofx.View

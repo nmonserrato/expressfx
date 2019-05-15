@@ -30,7 +30,7 @@ test {
 
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Main-Class': 'dev.neeno.expressfx.infrastructure.gui.MainAppKt'
+        attributes 'Main-Class': 'dev.neeno.expressfx.gui.MainAppKt'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }

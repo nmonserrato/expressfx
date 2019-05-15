@@ -1,6 +1,5 @@
-package dev.neeno.expressfx.domain.vpn
+package dev.neeno.expressfx.vpn
 
-import dev.neeno.expressfx.infrastructure.vpn.ExpressVpn
 import javafx.scene.layout.VBox
 
 interface VpnService {
