@@ -2,10 +2,10 @@ package dev.neeno.expressfx.vpn
 
 import dev.neeno.expressfx.vpn.Status.Companion.DISCONNECTED
 import javafx.scene.Parent
-import javafx.scene.layout.VBox
 import tornadofx.runAsync
 import tornadofx.ui
 import java.util.concurrent.TimeUnit
+import kotlin.streams.toList
 
 class ExpressVpn : VpnService {
     override fun status(): Status {
@@ -17,9 +17,9 @@ class ExpressVpn : VpnService {
         if (output.contains("Not connected"))
             return DISCONNECTED
 
-        val regex = """.*Connected to (\w+) - (\w+)""".toRegex()
-        val (country, city) = regex.find(output)!!.destructured
-        return Status.connectedTo(Server(country, city))
+        val regex = """.*Connected to (.*)""".toRegex()
+        val (serverName) = regex.find(output)!!.destructured
+        return Status.connectedTo(Server(description = serverName))
     }
 
     override fun switchStatus(root: Parent) {
@@ -46,5 +46,33 @@ class ExpressVpn : VpnService {
         val output = process.inputStream.reader(Charsets.UTF_8).readText()
         process.waitFor(10, TimeUnit.SECONDS)
         println("Process exit with status code ${process.exitValue()}. $output")
+    }
+
+    fun availableServers(): List<Server> {
+        println("Listing available servers")
+        val process = ProcessBuilder("expressvpn", "list", "all").start()
+
+        val reader = process.inputStream.reader(Charsets.UTF_8)
+        val servers = reader.readLines().stream()
+            .skip(2)
+            .map { parseServer(it) }
+            .peek { println(it) }
+            .toList()
+
+        process.waitFor(10, TimeUnit.SECONDS)
+
+        return servers
+    }
+
+    fun recommendedServers(): List<Server> {
+        return availableServers().filter { it.isRecommended() }
+    }
+
+    private fun parseServer(it: String): Server {
+        val id = it.substringBefore(" ")
+        val description = it.substring(44)
+        val recommended = description.endsWith("Y")
+        val name = description.removeSuffix("Y").trim()
+        return Server(id, id.substring(0, 2), name, recommended)
     }
 }

@@ -19,6 +19,16 @@ class ExpressVpnTest {
     }
 
     @Test
+    internal fun allLocations() {
+        vpn.availableServers()
+    }
+
+    @Test
+    internal fun recommendedLocations() {
+        vpn.recommendedServers()
+    }
+
+    @Test
     internal fun status() {
         println(vpn.status())
     }

@@ -63,12 +63,16 @@ private data class Connected(
 }
 
 data class Server(
-    private val country: String,
-    private val city: String
+    private val id: String? = null,
+    private val countryCode: String? = null,
+    private val description: String,
+    private val recommended: Boolean? = null
 ) {
     fun render(root: Parent) {
         val lookup = root.lookup("#connectLocation") as Label
-        lookup.text = "$country - $city"
+        lookup.text = description
     }
+
+    fun isRecommended() = recommended ?: false
 }
 

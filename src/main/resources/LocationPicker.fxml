@@ -33,7 +33,7 @@
                 </HBox>
             </ListView>
         </Tab>
-        <Tab fx:id="recommendedTab" text="Recommended"></Tab>
+        <Tab fx:id="recommendedTab" text="Recommended" />
         <Tab fx:id="allTab" text="All">
         </Tab>
     </TabPane>
