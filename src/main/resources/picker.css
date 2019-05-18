@@ -1,0 +1,11 @@
+.root {
+    -fx-alignment: top-center;
+    -fx-background-color: #efefef;
+    -fx-font-family: "Ubuntu";
+}
+
+#locationPickerTabPane {
+    -fx-alignment: top-center;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 350;
+}

@@ -1,14 +1,14 @@
 package dev.neeno.expressfx.gui
 
 import dev.neeno.expressfx.vpn.VpnService
+import javafx.scene.Parent
 import javafx.scene.control.Button
-import javafx.scene.layout.VBox
 import tornadofx.View
 import tornadofx.action
 
 
 class MainView : View() {
-    override val root: VBox by fxml(location = "/MainScreen.fxml")
+    override val root: Parent by fxml(location = "/MainScreen.fxml")
 
     private val vpn = VpnService.instance()
 

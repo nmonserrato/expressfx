@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<VBox id="container"
+      xmlns="http://javafx.com/javafx/8.0.40"
+      xmlns:fx="http://javafx.com/fxml/1">
+    <TabPane fx:id="locationPickerTabPane" tabClosingPolicy="UNAVAILABLE">
+        <Tab fx:id="favouritesTab" text="Favourites">
+            <ListView>
+                <HBox>
+                    <Pane prefWidth="30"><ImageView><Image url="flags/es.png" requestedHeight="12" preserveRatio="true"/></ImageView></Pane>
+                    <Label prefWidth="190" text="Spain - Madrid"/>
+                    <ImageView><Image url="icons/star.png" requestedHeight="12" preserveRatio="true"/></ImageView>
+                </HBox>
+                <HBox>
+                    <Pane prefWidth="30"><ImageView><Image url="flags/it.png" requestedHeight="12" preserveRatio="true"/></ImageView></Pane>
+                    <Label prefWidth="190" text="Italy - Milan"/>
+                    <ImageView><Image url="icons/star.png" requestedHeight="12" preserveRatio="true"/></ImageView>
+                </HBox>
+                <HBox>
+                    <Pane prefWidth="30"><ImageView><Image url="flags/ch.png" requestedHeight="12" preserveRatio="true"/></ImageView></Pane>
+                    <Label prefWidth="190" text="Switzerland 1"/>
+                    <ImageView><Image url="icons/star.png" requestedHeight="12" preserveRatio="true"/></ImageView>
+                </HBox>
+            </ListView>
+        </Tab>
+        <Tab fx:id="recommendedTab" text="Recommended"></Tab>
+        <Tab fx:id="allTab" text="All">
+        </Tab>
+    </TabPane>
+
+    <stylesheets>
+        <URL value="@picker.css"/>
+    </stylesheets>
+</VBox>

@@ -1,8 +1,12 @@
-#container {
+.root {
     -fx-alignment: top-center;
     -fx-background-color: #efefef;
-    -fx-pref-width: 250px;
     -fx-font-family: "Ubuntu";
+}
+
+#container {
+    -fx-alignment: top-center;
+    -fx-pref-width: 250px;
 }
 
 #connectedStatus {
@@ -31,7 +35,7 @@
 }
 
 #chooseLocationLink {
--fx-border-color: transparent;
+    -fx-border-color: transparent;
 }
 
 #buttonContainer {
