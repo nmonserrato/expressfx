@@ -1,5 +1,6 @@
 package dev.neeno.expressfx.vpn
 
+import dev.neeno.expressfx.config.Recent
 import dev.neeno.expressfx.gui.changeImageTo
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -24,6 +25,16 @@ data class Server(
             return servers.find { it.description == guiDescription }
                 ?: throw IllegalStateException("Selected server not found in server list")
         }
+
+        fun lastConnected(allServers: List<Server>): Server {
+            val lastServerId = Recent.file().lastServerId()
+            return allServers.find { it.id == lastServerId }!!
+        }
+
+        fun loadRecent(allServers: List<Server>): List<Server> {
+            val ids = Recent.file().allServers()
+            return ids.map { recentId -> allServers.find { it.id == recentId }!! }
+        }
     }
 
     fun isRecommended() = recommended ?: false
@@ -40,8 +51,12 @@ data class Server(
         return HBox(flag(), Label(description))
     }
 
-    fun cmdLineId(): String? {
+    fun cmdLineId(): String {
         return id ?: throw IllegalStateException("Invalid server selected with no id")
+    }
+
+    fun storeRecent() {
+        Recent.file().saveLast(this.id)
     }
 
     private fun flag(): Pane {

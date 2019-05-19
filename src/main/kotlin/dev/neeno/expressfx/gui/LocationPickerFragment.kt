@@ -13,14 +13,27 @@ class LocationPickerFragment : Fragment() {
 
     init {
         title = "Location Picker"
+        loadRecentList()
+        loadRecommended()
+        loadCompleteList()
+    }
 
-        val recommendedList = root.find<ListView<Any>>("#recommendedTabList")
-        recommendedList.onUserSelect { selectServer(it) }
-        vpn.renderServerList(recommendedList)
-
+    private fun loadCompleteList() {
         val allTabList = root.find<ListView<Any>>("#allTabList")
         allTabList.onUserSelect { selectServer(it) }
         vpn.renderServerList(allTabList, onlyRecommended = false)
+    }
+
+    private fun loadRecommended() {
+        val recommendedList = root.find<ListView<Any>>("#recommendedTabList")
+        recommendedList.onUserSelect { selectServer(it) }
+        vpn.renderServerList(recommendedList)
+    }
+
+    private fun loadRecentList() {
+        val recentList = root.find<ListView<Any>>("#recentTabList")
+        recentList.onUserSelect { selectServer(it) }
+        vpn.renderRecentServerList(recentList)
     }
 
     private fun selectServer(it: Any) {

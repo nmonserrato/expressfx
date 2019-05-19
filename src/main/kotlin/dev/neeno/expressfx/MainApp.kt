@@ -1,5 +1,6 @@
 package dev.neeno.expressfx
 
+import dev.neeno.expressfx.config.Recent
 import dev.neeno.expressfx.gui.MainView
 import javafx.stage.Stage
 import tornadofx.App

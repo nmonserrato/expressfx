@@ -9,6 +9,9 @@
       xmlns="http://javafx.com/javafx/8.0.40"
       xmlns:fx="http://javafx.com/fxml/1">
     <TabPane fx:id="locationPickerTabPane" tabClosingPolicy="UNAVAILABLE">
+        <Tab fx:id="recentTab" text="Recent">
+            <ListView fx:id="recentTabList"/>
+        </Tab>
         <Tab fx:id="recommendedTab" text="Recommended">
             <ListView fx:id="recommendedTabList"/>
         </Tab>

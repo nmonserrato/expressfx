@@ -1,5 +1,6 @@
 package dev.neeno.expressfx.vpn
 
+import dev.neeno.expressfx.config.Recent
 import dev.neeno.expressfx.vpn.Server.Companion.ALPHABETICAL_ORDER
 import dev.neeno.expressfx.vpn.Status.Companion.DISCONNECTED
 import javafx.collections.FXCollections
@@ -13,8 +14,8 @@ import kotlin.streams.toList
 
 class ExpressVpn : VpnService {
 
-    private val allServers : List<Server> = fetchAvailableServers()
-    private var selectedServer: Server = allServers.find { it.isSmart() }!!
+    private val allServers: List<Server> = fetchAvailableServers()
+    private var selectedServer: Server = Server.lastConnected(allServers)
 
     override fun switchStatus(container: Parent) {
         Status.CHANGING.render(container)
@@ -39,9 +40,19 @@ class ExpressVpn : VpnService {
     override fun renderServerList(container: ListView<Any>, onlyRecommended: Boolean) {
         val servers = if (onlyRecommended) recommendedServers() else allServers.sortedWith(ALPHABETICAL_ORDER)
         val smart = servers.find { it.isSmart() }!!
+        val filteredList = servers.filter { it.isSmart() || !it.sameAs(smart) }
 
+        renderServerList(container, filteredList)
+    }
+
+    override fun renderRecentServerList(container: ListView<Any>) {
+        val recent = Server.loadRecent(allServers)
+        renderServerList(container, recent)
+    }
+
+    private fun renderServerList(container: ListView<Any>, filteredList: List<Server>) {
         val list = FXCollections.observableArrayList<Any>()
-        servers.filter { it.isSmart() || !it.sameAs(smart) }.map { it.renderListItem() }.forEach { list.add(it) }
+        filteredList.map { it.renderListItem() }.forEach { list.add(it) }
         container.items = list
     }
 
@@ -61,6 +72,7 @@ class ExpressVpn : VpnService {
 
     private fun connect() {
         println("Trying to connect...")
+        selectedServer.storeRecent()
         val process = ProcessBuilder("expressvpn", "connect", selectedServer.cmdLineId()).start()
         val output = process.inputStream.reader(Charsets.UTF_8).readText()
         process.waitFor(30, TimeUnit.SECONDS)

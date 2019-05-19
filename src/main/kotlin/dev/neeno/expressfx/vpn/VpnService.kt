@@ -8,7 +8,8 @@ interface VpnService {
     fun switchStatus(container: Parent)
     fun renderStatus(container: Parent)
     fun renderServerList(container: ListView<Any>, onlyRecommended: Boolean = true)
-    fun selectServer(it: Node)
+    fun renderRecentServerList(container: ListView<Any>)
+    fun selectServer(guiItem: Node)
 
     companion object {
         private val instance = ExpressVpn()
