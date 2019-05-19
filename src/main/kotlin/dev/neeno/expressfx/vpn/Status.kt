@@ -14,11 +14,10 @@ interface Status {
         val DISCONNECTED: Status = Disconnected
         val CHANGING: Status = Changing
 
-        fun connectedTo(server: Server): Status =
-            Connected(server = server)
+        fun connectedTo(server: Server): Status = Connected(server = server)
     }
 
-    fun render(root: Parent)
+    fun render(container: Parent)
 }
 
 private object Disconnected : Status {
@@ -45,11 +44,9 @@ private object Changing : Status {
     }
 }
 
-private data class Connected(
-    private val server: Server? = null
-) : Status {
+private data class Connected(private val server: Server) : Status {
     override fun render(container: Parent) {
-        server?.renderDescription(container)
+        server.renderDescription(container)
 
         container.find<Node>("#connectedStatus").isVisible = false
 

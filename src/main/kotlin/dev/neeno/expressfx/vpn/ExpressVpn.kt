@@ -3,6 +3,7 @@ package dev.neeno.expressfx.vpn
 import dev.neeno.expressfx.vpn.Server.Companion.ALPHABETICAL_ORDER
 import dev.neeno.expressfx.vpn.Status.Companion.DISCONNECTED
 import javafx.collections.FXCollections
+import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.ListView
 import tornadofx.runAsync
@@ -12,7 +13,8 @@ import kotlin.streams.toList
 
 class ExpressVpn : VpnService {
 
-    private var cachedServers : List<Server> = fetchAvailableServers()
+    private val allServers : List<Server> = fetchAvailableServers()
+    private var selectedServer: Server = allServers.find { it.isSmart() }!!
 
     override fun switchStatus(container: Parent) {
         Status.CHANGING.render(container)
@@ -23,13 +25,19 @@ class ExpressVpn : VpnService {
         }
     }
 
+    override fun selectServer(guiItem: Node) {
+        selectedServer = Server.fromSelectedListItem(allServers, guiItem)
+        println("Selected server $selectedServer")
+    }
+
     override fun renderStatus(container: Parent) {
+        selectedServer.renderDescription(container)
+        println("Selected server is $selectedServer")
         status().render(container)
     }
 
     override fun renderServerList(container: ListView<Any>, onlyRecommended: Boolean) {
-        val servers =
-            if (onlyRecommended) recommendedServers() else cachedServers.sortedWith(ALPHABETICAL_ORDER)
+        val servers = if (onlyRecommended) recommendedServers() else allServers.sortedWith(ALPHABETICAL_ORDER)
         val smart = servers.find { it.isSmart() }!!
 
         val list = FXCollections.observableArrayList<Any>()
@@ -53,7 +61,7 @@ class ExpressVpn : VpnService {
 
     private fun connect() {
         println("Trying to connect...")
-        val process = ProcessBuilder("expressvpn", "connect", "esma").start()
+        val process = ProcessBuilder("expressvpn", "connect", selectedServer.cmdLineId()).start()
         val output = process.inputStream.reader(Charsets.UTF_8).readText()
         process.waitFor(30, TimeUnit.SECONDS)
 
@@ -61,7 +69,7 @@ class ExpressVpn : VpnService {
     }
 
     private fun disconnect() {
-        println("Trying to discconnect...")
+        println("Trying to disconnect...")
         val process = ProcessBuilder("expressvpn", "disconnect").start()
         val output = process.inputStream.reader(Charsets.UTF_8).readText()
         process.waitFor(10, TimeUnit.SECONDS)
@@ -85,7 +93,7 @@ class ExpressVpn : VpnService {
     }
 
     private fun recommendedServers(): List<Server> {
-        return cachedServers.filter { it.isRecommended() }
+        return allServers.filter { it.isRecommended() }
     }
 
     private fun parseServer(it: String): Server {

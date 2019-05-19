@@ -7,6 +7,8 @@ import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import tornadofx.getChildList
+import java.lang.IllegalStateException
 
 data class Server(
     private val id: String? = null,
@@ -16,6 +18,12 @@ data class Server(
 ) {
     companion object {
         val ALPHABETICAL_ORDER: Comparator<Server> = compareBy { it.description }
+
+        fun fromSelectedListItem(servers: List<Server>, guiItem: Node): Server {
+            val guiDescription = (guiItem.getChildList()!!.find { it is Label } as Label).text
+            return servers.find { it.description == guiDescription }
+                ?: throw IllegalStateException("Selected server not found in server list")
+        }
     }
 
     fun isRecommended() = recommended ?: false
@@ -30,6 +38,10 @@ data class Server(
 
     fun renderListItem(): Node {
         return HBox(flag(), Label(description))
+    }
+
+    fun cmdLineId(): String? {
+        return id ?: throw IllegalStateException("Invalid server selected with no id")
     }
 
     private fun flag(): Pane {
