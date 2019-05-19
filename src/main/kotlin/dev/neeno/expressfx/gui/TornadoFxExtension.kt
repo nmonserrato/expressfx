@@ -6,11 +6,10 @@ import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 
-fun ImageView.changeImageTo(resource: String): Image
-{
-    val icon = Image("icons/$resource")
+fun ImageView.changeImageTo(resource: String, folder: String = "icons", height: Double = 128.0): Image {
+    val icon = Image("$folder/$resource")
     this.image = icon
-    this.fitHeight = 128.0
+    this.fitHeight = height
     this.isPreserveRatio = true
     return icon
 }

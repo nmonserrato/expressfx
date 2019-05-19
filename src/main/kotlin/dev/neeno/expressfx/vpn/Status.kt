@@ -7,7 +7,6 @@ import dev.neeno.expressfx.gui.find
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Button
-import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 
 interface Status {
@@ -23,56 +22,42 @@ interface Status {
 }
 
 private object Disconnected : Status {
-    override fun render(root: Parent) {
-        root.find<Node>("#connectedStatus").isVisible = true
+    override fun render(container: Parent) {
+        container.find<Node>("#connectedStatus").isVisible = true
 
-        root.find<Button>("#connectButton").enable("CONNECT")
+        container.find<Button>("#connectButton").enable("CONNECT")
 
-        root.find<ImageView>("#connectedIcon").changeImageTo("unlocked.png")
+        container.find<ImageView>("#connectedIcon").changeImageTo("unlocked.png")
 
-        root.find<Node>("#chooseLocationContainer").isVisible = true
+        container.find<Node>("#chooseLocationContainer").isVisible = true
     }
 }
 
 private object Changing : Status {
-    override fun render(root: Parent) {
-        root.find<Node>("#connectedStatus").isVisible = true
+    override fun render(container: Parent) {
+        container.find<Node>("#connectedStatus").isVisible = true
 
-        root.find<Button>("#connectButton").disable("WAIT...")
+        container.find<Button>("#connectButton").disable("WAIT...")
 
-        root.find<ImageView>("#connectedIcon").changeImageTo("loading.gif")
+        container.find<ImageView>("#connectedIcon").changeImageTo("loading.gif")
 
-        root.find<Node>("#chooseLocationContainer").isVisible = false
+        container.find<Node>("#chooseLocationContainer").isVisible = false
     }
 }
 
 private data class Connected(
     private val server: Server? = null
 ) : Status {
-    override fun render(root: Parent) {
-        server?.render(root)
+    override fun render(container: Parent) {
+        server?.renderDescription(container)
 
-        root.find<Node>("#connectedStatus").isVisible = false
+        container.find<Node>("#connectedStatus").isVisible = false
 
-        root.find<Button>("#connectButton").enable("DISCONNECT")
+        container.find<Button>("#connectButton").enable("DISCONNECT")
 
-        root.find<ImageView>("#connectedIcon").changeImageTo("shield.png")
+        container.find<ImageView>("#connectedIcon").changeImageTo("shield.png")
 
-        root.find<Node>("#chooseLocationContainer").isVisible = false
+        container.find<Node>("#chooseLocationContainer").isVisible = false
     }
-}
-
-data class Server(
-    private val id: String? = null,
-    private val countryCode: String? = null,
-    private val description: String,
-    private val recommended: Boolean? = null
-) {
-    fun render(root: Parent) {
-        val lookup = root.lookup("#connectLocation") as Label
-        lookup.text = description
-    }
-
-    fun isRecommended() = recommended ?: false
 }
 

@@ -14,7 +14,7 @@ class MainView : View() {
 
     init {
         title = "ExpressFX"
-        vpn.status().render(root)
+        vpn.renderStatus(root)
 
         val button = root.lookup("#connectButton") as Button
         button.action { vpn.switchStatus(root) }
