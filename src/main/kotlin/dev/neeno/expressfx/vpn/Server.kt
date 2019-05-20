@@ -55,10 +55,6 @@ data class Server(
         return id ?: throw IllegalStateException("Invalid server selected with no id")
     }
 
-    fun storeRecent() {
-        Recent.file().saveLast(this.id)
-    }
-
     private fun flag(): Pane {
         val flag = ImageView()
         if ("smart" == id) {

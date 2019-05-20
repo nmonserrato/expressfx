@@ -1,6 +1,7 @@
 package dev.neeno.expressfx.vpn
 
-import dev.neeno.expressfx.config.Recent
+import dev.neeno.expressfx.events.Publisher.Companion.publisher
+import dev.neeno.expressfx.events.VpnConnected
 import dev.neeno.expressfx.vpn.Server.Companion.ALPHABETICAL_ORDER
 import dev.neeno.expressfx.vpn.Status.Companion.DISCONNECTED
 import javafx.collections.FXCollections
@@ -72,11 +73,11 @@ class ExpressVpn : VpnService {
 
     private fun connect() {
         println("Trying to connect...")
-        selectedServer.storeRecent()
         val process = ProcessBuilder("expressvpn", "connect", selectedServer.cmdLineId()).start()
         val output = process.inputStream.reader(Charsets.UTF_8).readText()
         process.waitFor(30, TimeUnit.SECONDS)
 
+        publisher().notifyEvent(VpnConnected(selectedServer))
         println("Process exit with status code ${process.exitValue()}. $output")
     }
 
