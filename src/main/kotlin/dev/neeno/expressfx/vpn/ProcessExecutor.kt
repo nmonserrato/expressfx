@@ -13,7 +13,7 @@ interface ProcessExecutor {
 
 private class CliProcessExecutor : ProcessExecutor {
     override fun exec(process: String, vararg arguments: String): List<String> {
-        println("Executing '$process' with arguments $arguments")
+        println("Executing '$process' with arguments ${Arrays.toString(arguments)}")
 
         val cmd = LinkedList<String>()
         cmd.addFirst(process)
@@ -26,5 +26,4 @@ private class CliProcessExecutor : ProcessExecutor {
         println("Process exit with status code ${cliProcess.exitValue()}. $output")
         return output
     }
-
 }

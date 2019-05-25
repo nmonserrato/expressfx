@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane
 import tornadofx.getChildList
 import java.lang.IllegalStateException
 
-data class Server (
+data class Server internal constructor(
     private val id: String? = null,
     private val countryCode: String? = null,
     private val description: String,
@@ -42,6 +42,10 @@ data class Server (
         fun loadRecent(allServers: List<Server>): List<Server> {
             val ids = Recent.file().allServers()
             return ids.map { recentId -> allServers.find { it.id == recentId }!! }
+        }
+
+        fun withName(name: String): Server {
+            return Server(description = name)
         }
     }
 

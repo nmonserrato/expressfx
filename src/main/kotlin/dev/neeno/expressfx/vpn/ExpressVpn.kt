@@ -46,7 +46,7 @@ class ExpressVpn : VpnService {
     }
 
     override fun renderRecommendedServerList(container: ListView<Any>) {
-        renderServerList(container, recommendedServers())
+        renderServerList(container, allServers.filter { it.isRecommended() })
     }
 
     override fun renderRecentServerList(container: ListView<Any>) {
@@ -66,7 +66,7 @@ class ExpressVpn : VpnService {
 
         val regex = """.*Connected to (.*)""".toRegex()
         val (serverName) = regex.find(output)!!.destructured
-        return Status.connectedTo(Server(description = serverName))
+        return Status.connectedTo(Server.withName(serverName))
     }
 
     private fun connect() {
@@ -84,9 +84,5 @@ class ExpressVpn : VpnService {
         val completeList = output.stream().skip(2).map { fromCliOutput(it) }.toList()
         val smart = completeList.find { it.isSmart() }!!
         return completeList.filter { it.isSmart() || !it.sameAs(smart) }
-    }
-
-    private fun recommendedServers(): List<Server> {
-        return allServers.filter { it.isRecommended() }
     }
 }
