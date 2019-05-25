@@ -3,6 +3,7 @@ package dev.neeno.expressfx.config
 import dev.neeno.expressfx.events.DomainEvent
 import dev.neeno.expressfx.events.Listener
 import dev.neeno.expressfx.events.Publisher.Companion.publisher
+import dev.neeno.expressfx.events.RecentServersChanged
 import dev.neeno.expressfx.events.VpnConnected
 import java.io.File
 import java.util.*
@@ -32,6 +33,7 @@ class Recent : Listener {
         recentServers.addFirst(id)
         val serializedList = recentServers.joinToString(separator = System.getProperty("line.separator"))
         file.writeText(serializedList)
+        publisher().notifyEvent(RecentServersChanged())
     }
 
     fun allServers(): List<String> = recentServers.stream().toList()
