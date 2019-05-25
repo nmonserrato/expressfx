@@ -2,7 +2,9 @@ package dev.neeno.expressfx.vpn
 
 import dev.neeno.expressfx.events.Publisher.Companion.publisher
 import dev.neeno.expressfx.events.VpnConnected
+import dev.neeno.expressfx.vpn.ProcessExecutor.Companion.cli
 import dev.neeno.expressfx.vpn.Server.Companion.ALPHABETICAL_ORDER
+import dev.neeno.expressfx.vpn.Server.Companion.fromCliOutput
 import dev.neeno.expressfx.vpn.Status.Companion.DISCONNECTED
 import javafx.collections.FXCollections
 import javafx.scene.Node
@@ -10,10 +12,13 @@ import javafx.scene.Parent
 import javafx.scene.control.ListView
 import tornadofx.runAsync
 import tornadofx.ui
-import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 
 class ExpressVpn : VpnService {
+
+    companion object {
+        private const val EXECUTABLE = "expressvpn"
+    }
 
     private val allServers: List<Server> = fetchAvailableServers()
     private var selectedServer: Server = Server.lastConnected(allServers)
@@ -29,26 +34,23 @@ class ExpressVpn : VpnService {
 
     override fun selectServer(guiItem: Node) {
         selectedServer = Server.fromSelectedListItem(allServers, guiItem)
-        println("Selected server $selectedServer")
     }
 
     override fun renderStatus(container: Parent) {
         selectedServer.renderDescription(container)
-        println("Selected server is $selectedServer")
         status().render(container)
     }
 
-    override fun renderServerList(container: ListView<Any>, onlyRecommended: Boolean) {
-        val servers = if (onlyRecommended) recommendedServers() else allServers.sortedWith(ALPHABETICAL_ORDER)
-        val smart = servers.find { it.isSmart() }!!
-        val filteredList = servers.filter { it.isSmart() || !it.sameAs(smart) }
+    override fun renderAllServerList(container: ListView<Any>) {
+        renderServerList(container, allServers.sortedWith(ALPHABETICAL_ORDER))
+    }
 
-        renderServerList(container, filteredList)
+    override fun renderRecommendedServerList(container: ListView<Any>) {
+        renderServerList(container, recommendedServers())
     }
 
     override fun renderRecentServerList(container: ListView<Any>) {
-        val recent = Server.loadRecent(allServers)
-        renderServerList(container, recent)
+        renderServerList(container, Server.loadRecent(allServers))
     }
 
     private fun renderServerList(container: ListView<Any>, filteredList: List<Server>) {
@@ -58,11 +60,7 @@ class ExpressVpn : VpnService {
     }
 
     private fun status(): Status {
-        println("Fetching status...")
-        val process = ProcessBuilder("expressvpn", "status").start()
-        val output = process.inputStream.reader(Charsets.UTF_8).let { it.readLines()[0] }
-        println(output)
-        process.waitFor()
+        val output = cli().exec(EXECUTABLE, "status")[0]
         if (output.contains("Not connected"))
             return DISCONNECTED
 
@@ -72,48 +70,23 @@ class ExpressVpn : VpnService {
     }
 
     private fun connect() {
-        println("Trying to connect...")
-        val process = ProcessBuilder("expressvpn", "connect", selectedServer.cmdLineId()).start()
-        val output = process.inputStream.reader(Charsets.UTF_8).readText()
-        process.waitFor(30, TimeUnit.SECONDS)
-
+        cli().exec(EXECUTABLE, "connect", selectedServer.cmdLineId())
         publisher().notifyEvent(VpnConnected(selectedServer))
-        println("Process exit with status code ${process.exitValue()}. $output")
+
     }
 
     private fun disconnect() {
-        println("Trying to disconnect...")
-        val process = ProcessBuilder("expressvpn", "disconnect").start()
-        val output = process.inputStream.reader(Charsets.UTF_8).readText()
-        process.waitFor(10, TimeUnit.SECONDS)
-        println("Process exit with status code ${process.exitValue()}. $output")
+        cli().exec(EXECUTABLE, "disconnect")
     }
 
     private fun fetchAvailableServers(): List<Server> {
-        println("Listing available servers")
-        val process = ProcessBuilder("expressvpn", "list", "all").start()
-
-        val reader = process.inputStream.reader(Charsets.UTF_8)
-        val servers = reader.readLines().stream()
-            .skip(2)
-            .map { parseServer(it) }
-            .peek { println(it) }
-            .toList()
-
-        process.waitFor(10, TimeUnit.SECONDS)
-
-        return servers
+        val output = cli().exec(EXECUTABLE, "list", "all")
+        val completeList = output.stream().skip(2).map { fromCliOutput(it) }.toList()
+        val smart = completeList.find { it.isSmart() }!!
+        return completeList.filter { it.isSmart() || !it.sameAs(smart) }
     }
 
     private fun recommendedServers(): List<Server> {
         return allServers.filter { it.isRecommended() }
-    }
-
-    private fun parseServer(it: String): Server {
-        val id = it.substringBefore(" ")
-        val description = it.substring(44)
-        val recommended = description.endsWith("Y")
-        val name = description.removeSuffix("Y").trim()
-        return Server(id, id.substring(0, 2), name, recommended)
     }
 }

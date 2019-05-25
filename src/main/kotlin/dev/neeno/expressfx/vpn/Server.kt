@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane
 import tornadofx.getChildList
 import java.lang.IllegalStateException
 
-data class Server(
+data class Server (
     private val id: String? = null,
     private val countryCode: String? = null,
     private val description: String,
@@ -24,6 +24,14 @@ data class Server(
             val guiDescription = (guiItem.getChildList()!!.find { it is Label } as Label).text
             return servers.find { it.description == guiDescription }
                 ?: throw IllegalStateException("Selected server not found in server list")
+        }
+
+        fun fromCliOutput(str: String): Server {
+            val id = str.substringBefore(" ")
+            val description = str.substring(44)
+            val recommended = description.endsWith("Y")
+            val name = description.removeSuffix("Y").trim()
+            return Server(id, id.substring(0, 2), name, recommended)
         }
 
         fun lastConnected(allServers: List<Server>): Server {

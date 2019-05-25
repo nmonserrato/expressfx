@@ -17,30 +17,30 @@ class LocationPickerFragment : Listener, Fragment() {
     private val vpn = VpnService.instance()
     init {
         title = "Location Picker"
-        loadRecentList()
-        loadRecommended()
-        loadCompleteList()
+        initRecentList()
+        initRecommendedList()
+        initCompleteServerList()
         publisher().register(this)
     }
 
     override fun somethingHappened(event: DomainEvent) {
         if (event is RecentServersChanged)
-            loadRecentList()
+            initRecentList()
     }
 
-    private fun loadCompleteList() {
+    private fun initCompleteServerList() {
         val allTabList = root.find<ListView<Any>>("#allTabList")
         allTabList.onUserSelect { selectServer(it) }
-        vpn.renderServerList(allTabList, onlyRecommended = false)
+        vpn.renderAllServerList(allTabList)
     }
 
-    private fun loadRecommended() {
+    private fun initRecommendedList() {
         val recommendedList = root.find<ListView<Any>>("#recommendedTabList")
         recommendedList.onUserSelect { selectServer(it) }
-        vpn.renderServerList(recommendedList)
+        vpn.renderRecommendedServerList(recommendedList)
     }
 
-    private fun loadRecentList() {
+    private fun initRecentList() {
         val recentList = root.find<ListView<Any>>("#recentTabList")
         recentList.onUserSelect { selectServer(it) }
         vpn.renderRecentServerList(recentList)
