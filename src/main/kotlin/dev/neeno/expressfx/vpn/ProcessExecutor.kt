@@ -11,7 +11,7 @@ interface ProcessExecutor {
     }
 }
 
-private class CliProcessExecutor : ProcessExecutor {
+private class CliProcessExecutor internal constructor(): ProcessExecutor {
     override fun exec(process: String, vararg arguments: String): List<String> {
         println("Executing '$process' with arguments ${Arrays.toString(arguments)}")
 

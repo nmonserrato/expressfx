@@ -13,7 +13,7 @@ interface VpnService {
     fun selectServer(guiItem: Node)
 
     companion object {
-        private val instance = ExpressVpn()
-        fun instance() = instance
+        private val instance = ExpressVpn(ProcessExecutor.cli())
+        fun instance(): VpnService = instance
     }
 }

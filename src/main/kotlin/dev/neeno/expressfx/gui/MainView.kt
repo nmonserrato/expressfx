@@ -9,11 +9,12 @@ import tornadofx.View
 import tornadofx.action
 
 
-class MainView : View() {
+class MainView(private val vpn: VpnService) : View() {
     override val root: Parent by fxml(location = "/MainScreen.fxml")
-
-    private val vpn = VpnService.instance()
     private val chooseLocationDialog = LocationPickerFragment()
+
+    @Suppress("unused")
+    constructor() : this(VpnService.instance())
 
     init {
         title = "ExpressFX"

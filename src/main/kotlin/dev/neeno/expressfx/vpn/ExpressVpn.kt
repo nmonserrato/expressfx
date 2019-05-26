@@ -14,7 +14,7 @@ import tornadofx.runAsync
 import tornadofx.ui
 import kotlin.streams.toList
 
-class ExpressVpn : VpnService {
+class ExpressVpn(private val cli: ProcessExecutor) : VpnService {
 
     companion object {
         private const val EXECUTABLE = "expressvpn"
@@ -60,7 +60,7 @@ class ExpressVpn : VpnService {
     }
 
     private fun status(): Status {
-        val output = cli().exec(EXECUTABLE, "status")[0]
+        val output = cli.exec(EXECUTABLE, "status")[0]
         if (output.contains("Not connected"))
             return DISCONNECTED
 
@@ -70,17 +70,17 @@ class ExpressVpn : VpnService {
     }
 
     private fun connect() {
-        cli().exec(EXECUTABLE, "connect", selectedServer.cmdLineId())
+        cli.exec(EXECUTABLE, "connect", selectedServer.cmdLineId())
         publisher().notifyEvent(VpnConnected(selectedServer))
 
     }
 
     private fun disconnect() {
-        cli().exec(EXECUTABLE, "disconnect")
+        cli.exec(EXECUTABLE, "disconnect")
     }
 
     private fun fetchAvailableServers(): List<Server> {
-        val output = cli().exec(EXECUTABLE, "list", "all")
+        val output = cli.exec(EXECUTABLE, "list", "all")
         val completeList = output.stream().skip(2).map { fromCliOutput(it) }.toList()
         val smart = completeList.find { it.isSmart() }!!
         return completeList.filter { it.isSmart() || !it.sameAs(smart) }

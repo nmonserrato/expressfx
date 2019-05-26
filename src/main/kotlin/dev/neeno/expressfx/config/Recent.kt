@@ -5,21 +5,35 @@ import dev.neeno.expressfx.events.Listener
 import dev.neeno.expressfx.events.Publisher.Companion.publisher
 import dev.neeno.expressfx.events.RecentServersChanged
 import dev.neeno.expressfx.events.VpnConnected
-import java.io.File
 import java.util.*
 import kotlin.streams.toList
 
-class Recent : Listener {
+interface Recent {
     companion object {
-        private const val RECENT_LIST_SIZE = 10
-        private val instance = Recent()
+        internal const val RECENT_LIST_SIZE = 10
+        private val instance = RecentFile()
         fun file() = instance
     }
 
-    private val file = File(System.getProperty("user.home") + "/.config/expressfx/recents")
+    fun lastServerId(): String
+    fun allServers(): List<String>
+}
+
+class RecentFile(private val file: File) : Recent, Listener {
+
+    constructor() : this(File.withName("recents"))
+
     private val recentServers = LinkedList<String>()
 
-    fun lastServerId() = recentServers[0]
+    init {
+        file.initializeIfNotExists("smart")
+        file.readLines().forEach { recentServers.addLast(it) }
+        publisher().register(this)
+    }
+
+    override fun lastServerId() = recentServers[0]
+
+    override fun allServers(): List<String> = recentServers.stream().toList()
 
     override fun somethingHappened(event: DomainEvent) {
         println("Recent received event of type ${event::class}")
@@ -29,19 +43,10 @@ class Recent : Listener {
 
     private fun saveLast(id: String?) {
         if (recentServers.contains(id)) recentServers.remove(id)
-        if (recentServers.size == RECENT_LIST_SIZE) recentServers.removeLast()
+        if (recentServers.size == Recent.RECENT_LIST_SIZE) recentServers.removeLast()
         recentServers.addFirst(id)
         val serializedList = recentServers.joinToString(separator = System.getProperty("line.separator"))
-        file.writeText(serializedList)
+        file.overwriteContent(serializedList)
         publisher().notifyEvent(RecentServersChanged())
-    }
-
-    fun allServers(): List<String> = recentServers.stream().toList()
-
-    init {
-        file.parentFile.mkdirs()
-        if (!file.exists()) file.writeText("smart")
-        file.readLines().forEach { recentServers.addLast(it) }
-        publisher().register(this)
     }
 }
