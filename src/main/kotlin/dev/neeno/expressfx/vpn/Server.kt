@@ -27,8 +27,9 @@ data class Server internal constructor(
         }
 
         fun fromCliOutput(str: String): Server {
-            val id = str.substringBefore(" ")
-            val description = str.substring(44)
+            println("Parsing server '$str'")
+            val regex = """(\w+)\s.*?(\s{5,}|\)\s+)(.+)""".toRegex()
+            val (id,_,description) = regex.find(str)!!.destructured
             val recommended = description.endsWith("Y")
             val name = description.removeSuffix("Y").trim()
             return Server(id, id.substring(0, 2), name, recommended)
