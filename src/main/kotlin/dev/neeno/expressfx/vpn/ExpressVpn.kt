@@ -2,7 +2,6 @@ package dev.neeno.expressfx.vpn
 
 import dev.neeno.expressfx.events.Publisher.Companion.publisher
 import dev.neeno.expressfx.events.VpnConnected
-import dev.neeno.expressfx.vpn.ProcessExecutor.Companion.cli
 import dev.neeno.expressfx.vpn.Server.Companion.ALPHABETICAL_ORDER
 import dev.neeno.expressfx.vpn.Server.Companion.fromCliOutput
 import dev.neeno.expressfx.vpn.Status.Companion.DISCONNECTED

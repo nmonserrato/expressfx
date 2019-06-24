@@ -20,7 +20,7 @@ data class Server internal constructor(
 ) {
     companion object {
         val ALPHABETICAL_ORDER: Comparator<Server> = compareBy { it.description }
-        val log = logger()
+        private val log = logger()
 
         fun fromSelectedListItem(servers: List<Server>, guiItem: Node): Server {
             val guiDescription = (guiItem.getChildList()!!.find { it is Label } as Label).text
