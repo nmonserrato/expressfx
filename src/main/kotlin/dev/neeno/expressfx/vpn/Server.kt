@@ -8,6 +8,7 @@ import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import org.apache.logging.log4j.kotlin.logger
 import tornadofx.getChildList
 import java.lang.IllegalStateException
 
@@ -19,6 +20,7 @@ data class Server internal constructor(
 ) {
     companion object {
         val ALPHABETICAL_ORDER: Comparator<Server> = compareBy { it.description }
+        val log = logger()
 
         fun fromSelectedListItem(servers: List<Server>, guiItem: Node): Server {
             val guiDescription = (guiItem.getChildList()!!.find { it is Label } as Label).text
@@ -27,12 +29,13 @@ data class Server internal constructor(
         }
 
         fun fromCliOutput(str: String): Server {
-            println("Parsing server '$str'")
             val regex = """(\w+)\s.*?(\s{5,}|\)\s+)(.+)""".toRegex()
             val (id,_,description) = regex.find(str)!!.destructured
             val recommended = description.endsWith("Y")
             val name = description.removeSuffix("Y").trim()
-            return Server(id, id.substring(0, 2), name, recommended)
+            val server = Server(id, id.substring(0, 2), name, recommended)
+            log.info("Parsed server '$server' from string '$str'")
+            return server
         }
 
         fun lastConnected(allServers: List<Server>): Server {

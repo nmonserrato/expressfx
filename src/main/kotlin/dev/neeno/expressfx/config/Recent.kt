@@ -5,6 +5,7 @@ import dev.neeno.expressfx.events.Listener
 import dev.neeno.expressfx.events.Publisher.Companion.publisher
 import dev.neeno.expressfx.events.RecentServersChanged
 import dev.neeno.expressfx.events.VpnConnected
+import org.apache.logging.log4j.kotlin.logger
 import java.util.*
 import kotlin.streams.toList
 
@@ -24,6 +25,7 @@ class RecentFile(private val file: File) : Recent, Listener {
     constructor() : this(File.withName("recents"))
 
     private val recentServers = LinkedList<String>()
+    private val log = logger()
 
     init {
         file.initializeIfNotExists("smart")
@@ -36,7 +38,7 @@ class RecentFile(private val file: File) : Recent, Listener {
     override fun allServers(): List<String> = recentServers.stream().toList()
 
     override fun somethingHappened(event: DomainEvent) {
-        println("Recent received event of type ${event::class}")
+        log.info("Recent received event of type ${event::class}")
         if (event is VpnConnected)
             saveLast(event.server.cmdLineId())
     }

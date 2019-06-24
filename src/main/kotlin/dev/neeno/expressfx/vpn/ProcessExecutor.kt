@@ -1,5 +1,6 @@
 package dev.neeno.expressfx.vpn
 
+import org.apache.logging.log4j.kotlin.logger
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -12,8 +13,9 @@ interface ProcessExecutor {
 }
 
 private class CliProcessExecutor internal constructor(): ProcessExecutor {
+    private val log = logger()
     override fun exec(process: String, vararg arguments: String): List<String> {
-        println("Executing '$process' with arguments ${Arrays.toString(arguments)}")
+        log.info("Executing '$process' with arguments ${Arrays.toString(arguments)}")
 
         val cmd = LinkedList<String>()
         cmd.addFirst(process)
@@ -23,7 +25,7 @@ private class CliProcessExecutor internal constructor(): ProcessExecutor {
         val output = cliProcess.inputStream.reader(Charsets.UTF_8).let { it.readLines() }
         cliProcess.waitFor(20, TimeUnit.SECONDS)
 
-        println("Process exit with status code ${cliProcess.exitValue()}. $output")
+        log.info("Process exit with status code ${cliProcess.exitValue()}. $output")
         return output
     }
 }

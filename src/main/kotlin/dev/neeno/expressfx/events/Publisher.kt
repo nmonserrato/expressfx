@@ -1,5 +1,7 @@
 package dev.neeno.expressfx.events
 
+import org.apache.logging.log4j.kotlin.logger
+
 interface DomainEvent
 
 interface Listener {
@@ -9,6 +11,7 @@ interface Listener {
 class Publisher private constructor() {
 
     private val listeners: MutableCollection<Listener> = LinkedHashSet()
+    private val log = logger()
 
     companion object {
         private val instance = Publisher()
@@ -16,12 +19,12 @@ class Publisher private constructor() {
     }
 
     fun register(listener: Listener) {
-        println("Registered new listener of type ${listener::class}")
+        log.info("Registered new listener of type ${listener::class}")
         listeners.add(listener)
     }
 
     fun notifyEvent(event: DomainEvent) {
-        println("Notifing event of type ${event::class}")
+        log.info("Notifing event of type ${event::class}")
         listeners.forEach { it.somethingHappened(event) }
     }
 }
